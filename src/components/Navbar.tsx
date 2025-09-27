@@ -1,10 +1,15 @@
+import AuthControls from "./AuthControls";
+
 export default function Navbar() {
     return (
-        <div className="bg-gray-800 h-16 flex items-center border-b border-gray-400">
-            <div className="
-                font-serif text-2xl pl-6 bg-gradient-to-r font-bold from-green-500
-                via-green-400 to-green-200 bg-clip-text text-transparent">
-                CampusVoice
+        <div className="bg-gray-800 h-19 border-b border-gray-400">
+            <div className="flex items-center justify-between h-full w-full px-6">
+                <div className="
+                    font-serif text-3xl font-bold bg-gradient-to-r from-green-500
+                    via-green-400 to-green-200 bg-clip-text text-transparent">
+                    CampusVoice
+                </div>
+                <AuthControls isAuthenticated={true} />
             </div>
         </div>
     )
