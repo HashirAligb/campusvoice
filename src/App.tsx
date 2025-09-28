@@ -1,12 +1,13 @@
 ﻿import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
+import Home from "./pages/Home/Home";
 
 function App() {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Landing />} />
-                {/* later we’ll add: <Route path="/app/*" element={<ClientApp />} /> */}
+                <Route path="/Home" element={<Home />} />
             </Routes>
         </BrowserRouter>
     );

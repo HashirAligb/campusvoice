@@ -2,7 +2,7 @@ import AuthControls from "./AuthControls";
 
 export default function Navbar() {
     return (
-        <div className="bg-gray-800 h-19 border-b border-gray-400">
+        <div className="bg-gray-900 h-19 border-b border-gray-500">
             <div className="flex items-center justify-between h-full w-full px-6">
                 <div className="
                     font-serif text-3xl font-bold bg-gradient-to-r from-green-500
