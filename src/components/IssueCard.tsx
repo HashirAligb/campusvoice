@@ -1,9 +1,10 @@
 // ADD MORE ISSUES
-type IssueCategory = "Tech" | "Infrastructure" | "Academics" | "Other";
+export type IssueCategory = "Tech" | "Infrastructure" | "Academics" | "Other";
 // ADD COLLEGES LATER
-type College = "CCNY" | "Hunter" | "Queens";
+export type College = "CCNY" | "Hunter" | "Queens";
 
-interface IssueCardProps {
+export interface IssueCardProps {
+   id: string;
    title: string;
    description: string;
    category: IssueCategory;
