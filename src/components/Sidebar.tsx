@@ -44,7 +44,7 @@ export default function Sidebar({ onCollapseChange }: SidebarProps) {
     }
 
     return (
-        <div className="w-full">
+        <div className="w-full pl-2">
             <div className="space-y-6">
                 {/* Header with collapse button */}
                 <div className="flex items-center justify-between border-b border-gray-600 pb-4">

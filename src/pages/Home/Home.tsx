@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar"
+import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar"
 import { useState } from "react"
 
@@ -6,10 +6,10 @@ export default function Home() {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-800">
+        <div className="min-h-screen bg-[#0D121F]">
             <Navbar />
             <div className="flex">
-                <div className={`${sidebarCollapsed ? 'w-12' : 'w-64'} min-h-screen bg-gray-800 ${sidebarCollapsed ? '' : 'border-r border-gray-600'} transition-all duration-300`}>
+                <div className={`${sidebarCollapsed ? 'w-12' : 'w-80'} min-h-screen bg-gray-900 border-r border-gray-600 overflow-hidden transition-[width] duration-300`}>
                     <div className="p-4">
                         <Sidebar onCollapseChange={setSidebarCollapsed} />
                     </div>
