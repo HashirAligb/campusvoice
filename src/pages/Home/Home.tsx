@@ -34,6 +34,10 @@ export default function Home() {
       },
    ]);
 
+   const handleDeleteIssue = (id: string): void => {
+      setIssues((prevIssues) => prevIssues.filter((issue) => issue.id !== id));
+   };
+
    return (
       <div className='min-h-screen bg-[#0D121F]'>
          <Navbar />
@@ -49,7 +53,10 @@ export default function Home() {
             </div>
             <div className='flex-1 flex items-start gap-6 px-4 py-4 max-w-5xl'>
                <div className='flex-1 max-w-2xl'>
-                  <IssueList issues={issues}></IssueList>
+                  <IssueList
+                     issues={issues}
+                     onDeleteIssue={handleDeleteIssue}
+                  ></IssueList>
                </div>
                <div className='w-80 sticky top-4'>
                   <div className='bg-gray-700 p-6 rounded-lg border border-gray-600'>
