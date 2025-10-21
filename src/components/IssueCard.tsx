@@ -1,7 +1,25 @@
 // ADD MORE ISSUES
 export type IssueCategory = "Tech" | "Infrastructure" | "Academics" | "Other";
-// ADD COLLEGES LATER
-export type College = "CCNY" | "Hunter" | "Queens";
+export type College =
+   | "CCNY"
+   | "Hunter"
+   | "Queens"
+   | "Baruch"
+   | "Graduate Center"
+   | "Guttman"
+   | "John Jay"
+   | "Macaulay"
+   | "BMCC"
+   | "Hostos"
+   | "Lehman"
+   | "Brooklyn"
+   | "City Tech"
+   | "Kingsborough"
+   | "Medgar Evers"
+   | "CIS"
+   | "LaGuardia"
+   | "Queensborough"
+   | "York";
 
 export interface IssueCardProps {
    id: string;
@@ -14,11 +32,12 @@ export interface IssueCardProps {
    username: string;
    upvotes: number;
    commentsCount: number;
+   onDelete?: (id: string) => void;
    // isBookmarked: boolean;
 }
 
-// change the header of function to fit other components
 const IssueCard: React.FC<IssueCardProps> = ({
+   id,
    title,
    description,
    category,
@@ -28,8 +47,8 @@ const IssueCard: React.FC<IssueCardProps> = ({
    username,
    upvotes,
    commentsCount,
+   onDelete,
 }) => {
-   // come back to this because lets do it down to the minutes
    const formattedDate = new Date(dateUploaded).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -37,6 +56,7 @@ const IssueCard: React.FC<IssueCardProps> = ({
    });
 
    const collegeColor = (college: string): string => {
+      // add more colors later
       switch (college) {
          case "CCNY":
             return "bg-blue-500";
@@ -49,12 +69,18 @@ const IssueCard: React.FC<IssueCardProps> = ({
       }
    };
 
+   const handleDelete = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (onDelete) {
+         onDelete(id);
+      }
+   };
+
    return (
-      // <article className="border border-gray-300 rounded-lg shadow-md p-4 mb-6 hover:shadow-lg transition-shadow duration-300">
-      <article className="bg-gray-700 border border-gray-600 rounded-lg shadow-xl p-4 mb-6 hover:shadow-2xl transition-shadow duration-300 text-white">
+      <article className='bg-gray-700 border border-gray-600 rounded-lg shadow-xl p-4 mb-6 hover:shadow-2xl transition-shadow duration-300 text-white relative'>
          {/* Header: College, Date, Username, Title, Category */}
-         <header className="mb-4">
-            <div className="header-left mb-2 text-sm text-gray-400 inline-flex items-center space-x-2">
+         <header className='mb-4'>
+            <div className='header-left mb-2 text-sm text-gray-400 inline-flex items-center space-x-2'>
                <span
                   className={`rounded-full ${collegeColor(
                      college
@@ -62,29 +88,37 @@ const IssueCard: React.FC<IssueCardProps> = ({
                >
                   {college}
                </span>
-               <span className="text-gray-500">•</span>
-               <span className="">{formattedDate}</span>
-               <span className="text-gray-500">•</span>
-               <p className="font-thin">{username}</p>
+               <span className='text-gray-500'>•</span>
+               <span className=''>{formattedDate}</span>
+               <span className='text-gray-500'>•</span>
+               <p className='font-thin'>{username}</p>
+               {onDelete && (
+                  <button
+                     onClick={handleDelete}
+                     className='text-white-500 hover:text-gray-500 text-sm float-right ml-4 cursor-pointer right-5 absolute font-bold'
+                  >
+                     X
+                  </button>
+               )}
             </div>
             <div>
-               <h2 className="font-extrabold text-2xl mb-2">{title}</h2>
-               <span className="rounded-full bg-gray-400 px-2 py-1 font-medium text-xs">
+               <h2 className='font-extrabold text-2xl mb-2'>{title}</h2>
+               <span className='rounded-full bg-gray-400 px-2 py-1 font-medium text-xs'>
                   {category}
                </span>
             </div>
          </header>
 
          {/* post contents */}
-         <div className="text-white">
+         <div className='text-white'>
             {image && (
                <img
                   src={image}
-                  alt="Issue"
-                  className="max-h-96 w-full object-cover rounded-md mb-4"
+                  alt='Issue'
+                  className='max-h-96 w-full object-cover rounded-md mb-4'
                />
             )}
-            <p className="text-base mb-4 leading-relaxed wrap-anywhere">
+            <p className='text-base mb-4 leading-relaxed wrap-anywhere'>
                {description}
             </p>
          </div>
@@ -92,14 +126,14 @@ const IssueCard: React.FC<IssueCardProps> = ({
          {/* footer 
          future improvements: change buttons to svg icons
          */}
-         <footer className="text-sm flex space-x-3">
-            <button className="rounded-full bg-gray-400 font-semibold px-3 py-1 inline-flex items-center hover:bg-gray-500 transition-colors">
-               <span className="mr-1">{upvotes}</span> Upvote
+         <footer className='text-sm flex space-x-3'>
+            <button className='rounded-full bg-gray-400 font-semibold px-3 py-1 inline-flex items-center hover:bg-gray-500 transition-colors cursor-pointer'>
+               <span className='mr-1'>{upvotes}</span> Upvote
             </button>
-            <button className="rounded-full bg-gray-400 font-semibold px-3 py-1 inline-flex items-center hover:bg-gray-500 transition-colors">
-               <span className="mr-1">{commentsCount}</span> Comment
+            <button className='rounded-full bg-gray-400 font-semibold px-3 py-1 inline-flex items-center hover:bg-gray-500 transition-colors cursor-pointer'>
+               <span className='mr-1'>{commentsCount}</span> Comment
             </button>
-            <button className="rounded-full bg-gray-400 font-semibold px-3 py-1 inline-flex items-center hover:bg-gray-500 transition-colors">
+            <button className='rounded-full bg-gray-400 font-semibold px-3 py-1 inline-flex items-center hover:bg-gray-500 transition-colors cursor-pointer'>
                Share
             </button>
          </footer>
