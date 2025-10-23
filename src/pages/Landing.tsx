@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar.tsx";
+import { useAuth } from "@/auth/useAuth"
 
 export default function Landing() {
     const navigate = useNavigate();
+    const {isAuthenticated: isLoggedIn} = useAuth();
     
     return (
         <div className="min-h-screen flex flex-col">
@@ -23,12 +25,12 @@ export default function Landing() {
                         A community-driven platform where students can raise issues, share feedback, and work together to improve campus life.
                     </p>
                     <div className="flex text-center justify-center space-x-4">
-                        <button onClick={() => navigate("/Home")}
+                        <button onClick={() => { if (!isLoggedIn) { navigate("/Login") } else navigate("/Home") }}
                             className="mt-4 px-5 py-2 bg-green-500 text-white text-xl font-semibold rounded-lg shadow-xl
                             hover:bg-green-700 hover:scale-105 transform transition duration-300">
                             Browse Issues
                         </button>
-                        <button onClick={() => navigate("/PostCard")}
+                        <button onClick={() => { if (!isLoggedIn) { navigate("/Login") } else navigate("/PostCard") }}
                             className="mt-4 px-5 py-2 bg-green-500 text-white text-xl font-semibold rounded-lg shadow-xl
                             hover:bg-green-700 hover:scale-105 transform transition duration-300">
                             Report an Issue

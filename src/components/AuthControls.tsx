@@ -1,12 +1,12 @@
 type Props = {
-    isAuthenticated?: boolean;
+    loggedIn?: boolean;
     onLoginClick?: () => void;
     onSignupClick?: () => void;
     onLogoutClick?: () => void;
 };
 
-export default function AuthControls({ isAuthenticated = false, onLoginClick, onSignupClick, onLogoutClick }: Props) {
-    if (!isAuthenticated) {
+export default function AuthControls({ loggedIn, onLoginClick, onSignupClick, onLogoutClick }: Props) {
+    if (!loggedIn) {
         return (
             <div className="flex gap-3">
                 <button type="button" onClick={onLoginClick}
@@ -23,9 +23,8 @@ export default function AuthControls({ isAuthenticated = false, onLoginClick, on
             </div>
         )
     }
-
     return (
-        <button type="button" onClick={onLoginClick}
+        <button type="button" onClick={onLogoutClick}
         className="bg-red-500 rounded-full px-4 py-3 text-white text-xl
         hover:bg-red-700 hover:scale-105 transform transition duration-300">
             Log Out

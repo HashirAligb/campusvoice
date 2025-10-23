@@ -15,6 +15,5 @@ export function useAuth() {
     }, []);
 
     const signOut = useCallback(() => supabase.auth.signOut(), []);
-
     return { user, isAuthenticated: !!user, signOut };
 }
