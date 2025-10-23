@@ -1,6 +1,5 @@
 import AuthControls from "./AuthControls";
 import { useAuth } from "@/auth/useAuth";
-import { use } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
