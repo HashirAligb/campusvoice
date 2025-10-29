@@ -9,18 +9,22 @@ type CollegeFilterOption = College | "All";
 interface IssueListProps {
    issues: IssueCardProps[];
    onDeleteIssue?: (id: string) => void;
+   // filterCollege?: CollegeFilterOption;
+   // filterCategory?: FilterOption;
+   filterCollege?: string;
+   filterCategory?: string;
 }
 
 // when user is logged in, set college to their college
 const IssueList: React.FC<IssueListProps> = ({
    issues,
-   // filterByCollege = "All",
-   // filterByCategory = "All"
+   filterCollege = "All",
+   filterCategory = "All",
    onDeleteIssue,
 }) => {
-   const [filterCategory, setFilterCategory] = useState<FilterOption>("All");
-   const [filterCollege, setFilterCollege] =
-      useState<CollegeFilterOption>("All");
+   // const [filterCategory, setFilterCategory] = useState<FilterOption>("All");
+   // const [filterCollege, setFilterCollege] =
+   //    useState<CollegeFilterOption>("All");
 
    const filteredIssues = () => {
       if (filterCollege === "All" && filterCategory === "All") {
@@ -37,14 +41,6 @@ const IssueList: React.FC<IssueListProps> = ({
          );
       }
    };
-
-   // const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-   //    setFilterCategory(e.target.value as FilterOption);
-   // };
-
-   // const handleCollegeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-   //    setFilterCollege(e.target.value as CollegeFilterOption);
-   // };
 
    return (
       <div className='bg-gray-700 p-6 rounded-lg border border-gray-600 w-full'>

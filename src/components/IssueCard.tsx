@@ -1,5 +1,12 @@
 // ADD MORE ISSUES
-export type IssueCategory = "Tech" | "Infrastructure" | "Academics" | "Other";
+export type IssueCategory =
+   | "Tech"
+   | "Facilities"
+   | "Infrastructure"
+   | "Academics"
+   | "Safety"
+   | "Services"
+   | "Other";
 export type College =
    | "CCNY"
    | "Hunter"

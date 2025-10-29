@@ -6,6 +6,10 @@ import { useState } from "react";
 
 export default function Home() {
    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+   const [selectedSchool, setSelectedSchool] = useState<string | "All">("All");
+   const [selectedCategory, setSelectedCategory] = useState<string | "All">(
+      "All"
+   );
 
    const [issues, setIssues] = useState<IssueCardProps[]>([
       {
@@ -48,7 +52,13 @@ export default function Home() {
                } min-h-screen bg-gray-900 border-r border-gray-600 overflow-hidden transition-[width] duration-300`}
             >
                <div className='p-4'>
-                  <Sidebar onCollapseChange={setSidebarCollapsed} />
+                  <Sidebar
+                     onCollapseChange={setSidebarCollapsed}
+                     setSelectedSchool={setSelectedSchool}
+                     setSelectedCategory={setSelectedCategory}
+                     selectedSchool={selectedSchool}
+                     selectedCategory={selectedCategory}
+                  />
                </div>
             </div>
             <div className='flex-1 flex items-start gap-6 px-4 py-4 max-w-5xl'>
@@ -56,6 +66,8 @@ export default function Home() {
                   <IssueList
                      issues={issues}
                      onDeleteIssue={handleDeleteIssue}
+                     filterCollege={selectedSchool}
+                     filterCategory={selectedCategory}
                   ></IssueList>
                </div>
                <div className='w-80 sticky top-4'>
