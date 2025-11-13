@@ -2,12 +2,45 @@ import { useState, useEffect } from "react";
 
 interface SidebarProps {
     onCollapseChange?: (collapsed: boolean) => void;
+    selectedSchool?: string | null;
+    selectedCategory?: string | null;
+    onSchoolChange?: (school: string | null) => void;
+    onCategoryChange?: (category: string | null) => void;
 }
 
-export default function Sidebar({ onCollapseChange }: SidebarProps) {
+export default function Sidebar({ 
+    onCollapseChange,
+    selectedSchool: externalSelectedSchool,
+    selectedCategory: externalSelectedCategory,
+    onSchoolChange,
+    onCategoryChange,
+}: SidebarProps) {
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedSchool, setSelectedSchool] = useState<string | null>(externalSelectedSchool || null);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(externalSelectedCategory || null);
+
+    // Sync with external state
+    useEffect(() => {
+        if (externalSelectedSchool !== undefined) {
+            setSelectedSchool(externalSelectedSchool);
+        }
+    }, [externalSelectedSchool]);
+
+    useEffect(() => {
+        if (externalSelectedCategory !== undefined) {
+            setSelectedCategory(externalSelectedCategory);
+        }
+    }, [externalSelectedCategory]);
+
+    const handleSchoolChange = (school: string | null) => {
+        setSelectedSchool(school);
+        onSchoolChange?.(school);
+    };
+
+    const handleCategoryChange = (category: string | null) => {
+        setSelectedCategory(category);
+        onCategoryChange?.(category);
+    };
 
     useEffect(() => {
         onCollapseChange?.(isCollapsed);
@@ -69,7 +102,7 @@ export default function Sidebar({ onCollapseChange }: SidebarProps) {
                         {cunySchools.map((school) => (
                             <button
                                 key={school.code}
-                                onClick={() => setSelectedSchool(selectedSchool === school.code ? null : school.code)}
+                                onClick={() => handleSchoolChange(selectedSchool === school.code ? null : school.code)}
                                 className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
                                     selectedSchool === school.code
                                         ? "bg-green-600 text-white"
@@ -91,7 +124,7 @@ export default function Sidebar({ onCollapseChange }: SidebarProps) {
                         {issueCategories.map((category) => (
                             <button
                                 key={category.name}
-                                onClick={() => setSelectedCategory(selectedCategory === category.name ? null : category.name)}
+                                onClick={() => handleCategoryChange(selectedCategory === category.name ? null : category.name)}
                                 className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center space-x-2 ${
                                     selectedCategory === category.name
                                         ? "bg-green-600 text-white"
@@ -110,8 +143,8 @@ export default function Sidebar({ onCollapseChange }: SidebarProps) {
                     <div className="border-t border-gray-600 pt-4">
                         <button
                             onClick={() => {
-                                setSelectedSchool(null);
-                                setSelectedCategory(null);
+                                handleSchoolChange(null);
+                                handleCategoryChange(null);
                             }}
                             className="w-full px-3 py-2 bg-gray-700 text-gray-300 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors"
                         >
