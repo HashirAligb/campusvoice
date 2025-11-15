@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/auth/useAuth";
 
