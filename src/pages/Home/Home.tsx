@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/Sidebar";
-import Feed from "@/components/Feed";
+import Sidebar from "@/components/Home/Sidebar";
+import Feed from "@/components/Home/Feed";
 import ReportIssueModal from "@/components/ReportIssueModal";
 import { useState } from "react";
 
@@ -21,11 +21,7 @@ export default function Home() {
             <Navbar />
             <div className="flex">
             {/* Sidebar */}
-                <div
-                    className={`${
-                    sidebarCollapsed ? 'w-12' : 'w-60'
-                    } min-h-screen bg-[#12161f] border-r border-gray-600 overflow-hidden transition-[width] duration-150`}
-                >
+                <div className={`${ sidebarCollapsed ? 'w-12' : 'w-70'} min-h-screen bg-[#12161f] border-r border-gray-600 overflow-hidden transition-[width] duration-150`}>
                     <div className="p-4">
                     <Sidebar
                         onCollapseChange={setSidebarCollapsed}

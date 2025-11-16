@@ -43,9 +43,9 @@ export default function Searchbar({
         if (timerRef.current) {
             window.clearTimeout(timerRef.current);
         }
-        if (debounceMs > 0 && onSearch) {
+        if (debounceMs > 0 && onChange) {
             timerRef.current = window.setTimeout(() => {
-                onSearch(input);
+                onChange(input);
                 timerRef.current = null;
             }, debounceMs);
         }
@@ -55,7 +55,7 @@ export default function Searchbar({
                 timerRef.current = null;
             }
         };
-    }, [input, debounceMs, onSearch]);
+    }, [input, debounceMs, onChange]);
 
     const filtered = suggestions.filter((s) =>
         s.toLowerCase().includes(input.trim().toLowerCase())
@@ -74,7 +74,7 @@ export default function Searchbar({
             window.clearTimeout(timerRef.current);
             timerRef.current = null;
         }
-        onSearch?.(v);
+        onChange?.(v);
         setOpen(false);
         inputRef.current?.blur();
     }
@@ -125,7 +125,7 @@ export default function Searchbar({
                 Search
             </label>
 
-            <div className="flex items-center rounded-3xl px-2 py-1.5 bg-gray-500">
+            <div className="relative flex bg-[#161b27] text-gray-300 items-center border-2 border-gray-300 rounded-3xl px-2 py-1 z-20">
                 <svg
                     width="16"
                     height="16"
@@ -203,8 +203,7 @@ export default function Searchbar({
                     id="search-suggestions"
                     role="listbox"
                     ref={listRef}
-                    className="absolute left-0 right-0 mt-1.5 bg-white border border-gray-100 shadow-lg rounded-lg list-none p-0 max-h-56 overflow-auto z-50"
-                >
+                    className="absolute left-0 right-0 bg-[#161b27] shadow-lg rounded-b-2xl -mt-5 pt-6 list-none p-0 max-h-56 overflow-auto z-10">
                     {filtered.map((s, i) => {
                         const isHighlighted = i === highlight;
                         return (
@@ -218,9 +217,7 @@ export default function Searchbar({
                                 }}
                                 onClick={() => choose(s)}
                                 onMouseEnter={() => setHighlight(i)}
-                                className={`px-3 py-2 cursor-pointer hover:bg-blue-50 ${
-                                    isHighlighted ? "bg-blue-50" : ""
-                                }`}
+                                className={`px-3 py-2 text-gray-300 cursor-pointer  ${isHighlighted ? "bg-gray-800 " : "bg-[#161b27]"}`}
                             >
                                 {s}
                             </li>

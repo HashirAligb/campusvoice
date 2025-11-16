@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import PostCard from "./PostCard";
+import PostCard from "../PostCard";
 
 interface Issue {
     id: string;
