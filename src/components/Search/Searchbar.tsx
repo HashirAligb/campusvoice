@@ -15,7 +15,6 @@ type SearchbarProps = {
 export default function Searchbar({
     value,
     onChange,
-    onSearch,
     placeholder = "Search...",
     debounceMs = 300,
     suggestions = [],
@@ -125,7 +124,7 @@ export default function Searchbar({
                 Search
             </label>
 
-            <div className="relative flex bg-[#161b27] text-gray-300 items-center border-2 border-gray-300 rounded-3xl px-2 py-1 z-20">
+            <div className="relative flex bg-[#161b27] text-gray-300 items-center border-2 border-gray-300 rounded-3xl ml-3 px-2 py-1 z-20">
                 <svg
                     width="16"
                     height="16"
@@ -203,7 +202,7 @@ export default function Searchbar({
                     id="search-suggestions"
                     role="listbox"
                     ref={listRef}
-                    className="absolute left-0 right-0 bg-[#161b27] shadow-lg rounded-b-2xl -mt-5 pt-6 list-none p-0 max-h-56 overflow-auto z-10">
+                    className="absolute left-0 right-0 bg-[#161b27] shadow-lg rounded-b-2xl -mt-5 ml-3 pt-6 list-none p-0 max-h-56 overflow-auto z-10">
                     {filtered.map((s, i) => {
                         const isHighlighted = i === highlight;
                         return (

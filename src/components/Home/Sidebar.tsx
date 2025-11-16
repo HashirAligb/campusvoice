@@ -2,20 +2,24 @@ import { useState, useEffect } from "react";
 
 interface SidebarProps {
     onCollapseChange?: (collapsed: boolean) => void;
+    onMobileClose?: () => void;
     selectedSchool?: string | null;
     selectedCategory?: string | null;
     onSchoolChange?: (school: string | null) => void;
     onCategoryChange?: (category: string | null) => void;
+    collapsed?: boolean;
 }
 
 export default function Sidebar({ 
     onCollapseChange,
+    onMobileClose,
     selectedSchool: externalSelectedSchool,
     selectedCategory: externalSelectedCategory,
     onSchoolChange,
     onCategoryChange,
+    collapsed,
 }: SidebarProps) {
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(!!collapsed);
     const [selectedSchool, setSelectedSchool] = useState<string | null>(externalSelectedSchool || null);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(externalSelectedCategory || null);
 
@@ -41,6 +45,12 @@ export default function Sidebar({
         setSelectedCategory(category);
         onCategoryChange?.(category);
     };
+
+    useEffect(() => {
+        if (collapsed !== undefined) {
+            setIsCollapsed(collapsed);
+        }
+    }, [collapsed]);
 
     useEffect(() => {
         onCollapseChange?.(isCollapsed);
@@ -83,7 +93,10 @@ export default function Sidebar({
                 <div className="flex items-center justify-between border-b border-gray-600 pb-4">
                     <h2 className="text-lg font-semibold text-green-400">Browse Issues</h2>
                     <button
-                        onClick={() => setIsCollapsed(true)}
+                        onClick={() => {
+                            setIsCollapsed(true);
+                            onMobileClose?.();
+                        }}
                         className="p-1 hover:bg-gray-700 rounded-md transition-colors"
                         title="Collapse sidebar"
                     >
