@@ -77,7 +77,7 @@ export default function Home() {
 
                 {/* Feed */}
                 <div className="flex-1 py-4">
-                    <div className="flex max-w-8xl mx-10 gap-8 px-4">
+                    <div className="flex max-w-7xl mx-auto gap-8 px-4">
                         <div className="flex-1">
                             <div className="max-w-4xl">
                                 <h2 className="text-2xl font-semibold text-white mb-2">
