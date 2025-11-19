@@ -34,8 +34,7 @@ export default function Login() {
             <div className="flex flex-1 items-center justify-center bg-gray-900 text-white">
 
                 <div className="w-full max-w-sm p-8 bg-gray-800 rounded-lg text-center border border-gray-400">
-                    <h1 className="text-3xl font-semibold tracking-tight
-                    bg-gradient-to-r from-green-500 via-green-400 to-green-200 bg-clip-text text-transparent">
+                    <h1 className="text-3xl font-semibold tracking-tight sig-gradient">
                         Log In
                     </h1>
                     <form className="mt-6 mb-2 space-y-4 text-left" onSubmit={handleLogin}>

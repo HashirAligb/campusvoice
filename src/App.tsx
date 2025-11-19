@@ -3,6 +3,7 @@ import Landing from "./pages/Landing";
 import Home from "./pages/Home/Home";
 import Login from "./pages/AuthPage/Login";
 import Signup from "./pages/AuthPage/Signup";
+import IssueDetail from "./pages/IssueDetail";
 
 function App() {
     return (
@@ -12,6 +13,7 @@ function App() {
                 <Route path="/Home" element={<Home />} />
                 <Route path="/Login" element={<Login />} />
                 <Route path="/Signup" element={<Signup />} />
+                <Route path="/issues/:issueId" element={<IssueDetail />} />
             </Routes>
         </BrowserRouter>
     );

@@ -10,30 +10,23 @@ type NavbarProps = {
 export default function Navbar({ onOpenSidebar }: NavbarProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signOut, isAuthenticated } = useAuth();
+  const { signOut, isAuthenticated, isLoading } = useAuth();
   const isHome = location.pathname === "/Home";
 
   console.log("Navbar path:", location.pathname, "isHome:", isHome);
 
   return (
-    <div className="bg-[#12161f] h-19 border-b border-gray-500">
+    <div className="bg-[#12161f] h-19 z-50 border-b border-gray-500 sticky top-0">
       <div className="flex items-center justify-between h-full w-full px-6">
         <div className="flex items-center gap-3">
-          {/* Mobile hamburger */}
-          <button
-            className="xl:hidden p-2 mr-2 rounded hover:bg-gray-800"
-            onClick={onOpenSidebar}
-          >
-            {/* simple icon */}
+          {/* Mobile hamburger Icon*/}
+          <button className="xl:hidden p-2 mr-2 rounded hover:bg-gray-800" onClick={onOpenSidebar}>
             <span className="block w-5 h-0.5 bg-white mb-1" />
             <span className="block w-5 h-0.5 bg-white mb-1" />
             <span className="block w-5 h-0.5 bg-white" />
           </button>
 
-          <Link
-            to="/"
-            className="hidden md:block font-serif text-3xl font-bold mr-4 bg-gradient-to-r from-green-500 via-green-400 to-green-200 bg-clip-text text-transparent"
-          >
+          <Link to="/" className="hidden md:block font-serif text-3xl font-bold mr-4 sig-gradient">
             CampusVoice
           </Link>
         </div>
@@ -41,6 +34,7 @@ export default function Navbar({ onOpenSidebar }: NavbarProps) {
         {isHome && <IssuesSearch />}
 
         <AuthControls
+          loading={isLoading}
           loggedIn={isAuthenticated}
           onLoginClick={() => navigate("/Login")}
           onSignupClick={() => navigate("/Signup")}

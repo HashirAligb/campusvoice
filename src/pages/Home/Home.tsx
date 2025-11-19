@@ -1,11 +1,11 @@
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Home/Sidebar";
 import Feed from "@/components/Home/Feed";
 import ReportIssueModal from "@/components/ReportIssueModal";
-import { useState } from "react";
 
 export default function Home() {
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -13,29 +13,33 @@ export default function Home() {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const handleModalSuccess = () => {
-        // Trigger refresh of the feed
-        setRefreshTrigger(prev => prev + 1);
+        setRefreshTrigger((prev) => prev + 1);
     };
-
+    
     return (
-        <div className="min-h-screen bg-[#0c0e14]">
-        {/* Navbar should show a hamburger on mobile that calls onOpenSidebar */}
-            <Navbar onOpenSidebar={() => {
-                setSidebarCollapsed(false);
-                setIsMobileSidebarOpen(true);
-            }} />
+        <div className="relative min-h-screen">
+            <div className="fixed inset-0 -z-10 w-full [background:radial-gradient(125%_125%_at_50%_10%,#0d1017_60%,#4b5563_100%)]" />
+            {/* Navbar: hamburger on mobile triggers mobile sidebar */}
+            <Navbar
+                onOpenSidebar={() => {
+                    setIsMobileSidebarOpen(true);
+                }}
+            />
 
             {/* Mobile overlay sidebar */}
-            <div className={`fixed inset-y-0 left-0 z-40 w-70 bg-[#12161f] border-r border-gray-600 transition-transform duration-150 xl:hidden ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                <div className="p-4">
+            <div
+                className={`fixed top-19 inset-y-0 left-0 z-40 w-70 bg-[#12161f] border-r border-gray-600 
+                            transition-transform duration-150 xl:hidden 
+                            ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+            >
+                <div className="h-full overflow-y-auto p-4 sidebar-scroll">
                     <Sidebar
-                        collapsed={sidebarCollapsed}
-                        onCollapseChange={setSidebarCollapsed}
-                        onMobileClose={() => setIsMobileSidebarOpen(false)}
                         selectedSchool={selectedSchool}
                         selectedCategory={selectedCategory}
                         onSchoolChange={setSelectedSchool}
                         onCategoryChange={setSelectedCategory}
+                        isOpen={isMobileSidebarOpen}
+                        onToggleSidebar={() => setIsMobileSidebarOpen((prev) => !prev)}
                     />
                 </div>
             </div>
@@ -51,46 +55,52 @@ export default function Home() {
             <div className="flex">
                 {/* Desktop Sidebar */}
                 <div className="hidden xl:block">
-                    <div className={`${sidebarCollapsed ? "w-12" : "w-70"} min-h-screen bg-[#12161f] border-r border-gray-600 overflow-hidden transition-[width] duration-150`}>
-                        <div className="p-4">
-                            <Sidebar
-                                collapsed={sidebarCollapsed}
-                                onCollapseChange={setSidebarCollapsed}
-                                selectedSchool={selectedSchool}
-                                selectedCategory={selectedCategory}
-                                onSchoolChange={setSelectedSchool}
-                                onCategoryChange={setSelectedCategory}
-                            />
+                    <div className="sticky top-19">
+                        {/* Slide-in/out container */}
+                        <div
+                            className={`w-90 h-full bg-[#12161f] border-r border-gray-600 transition-transform
+                                        duration-300 ${isDesktopSidebarOpen ? "translate-x-0" : "-translate-x-[90%]"}`}
+                        >
+                            <div className={`max-h-[calc(100vh-5rem)] p-4 pr-10 ${isDesktopSidebarOpen ? "overflow-y-auto sidebar-scroll" : "overflow-hidden" }`}>
+                                <Sidebar
+                                    selectedSchool={selectedSchool}
+                                    selectedCategory={selectedCategory}
+                                    onSchoolChange={setSelectedSchool}
+                                    onCategoryChange={setSelectedCategory}
+                                    isOpen={isDesktopSidebarOpen}
+                                    onToggleSidebar={() => setIsDesktopSidebarOpen((prev) => !prev)}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Feed */}
                 <div className="flex-1 py-4">
-                    <div className="flex max-w-6xl mx-auto gap-8 px-4">
+                    <div className="flex max-w-8xl mx-10 gap-8 px-4">
                         <div className="flex-1">
-                            <div className="max-w-3xl">
+                            <div className="max-w-4xl">
                                 <h2 className="text-2xl font-semibold text-white mb-2">
-                                Recent Issues
+                                    Recent Issues
                                 </h2>
                                 <Feed
-                                selectedSchool={selectedSchool}
-                                selectedCategory={selectedCategory}
-                                refreshTrigger={refreshTrigger}
+                                    selectedSchool={selectedSchool}
+                                    selectedCategory={selectedCategory}
+                                    refreshTrigger={refreshTrigger}
                                 />
                             </div>
                         </div>
 
-                        {/* Quick Actions (optional: hide on mobile) */}
-                        <div className="w-70 hidden lg:block">
+                        {/* Quick Actions (hide on mobile) */}
+                        <div className="hidden lg:block w-70 self-start sticky top-23">
                             <div className="bg-[#12161f] p-6 rounded-xl border border-gray-600">
                                 <h3 className="text-lg font-semibold text-white mb-4">
-                                Quick Actions
+                                    Quick Actions
                                 </h3>
                                 <div className="space-y-3">
                                     <button
                                         onClick={() => setIsModalOpen(true)}
-                                        className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
+                                        className="w-full btn-border-reveal py-2 px-4 rounded-md"
                                     >
                                         Report New Issue
                                     </button>

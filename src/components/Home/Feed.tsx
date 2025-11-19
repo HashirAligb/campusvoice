@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import PostCard from "../PostCard";
 
@@ -34,6 +35,7 @@ export default function Feed({ selectedSchool, selectedCategory, refreshTrigger 
     const [issues, setIssues] = useState<Issue[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const fetchIssues = async () => {
         setLoading(true);
@@ -170,7 +172,12 @@ export default function Feed({ selectedSchool, selectedCategory, refreshTrigger 
     return (
         <div className="space-y-4">
             {issues.map((issue) => (
-                <PostCard key={issue.id} issue={issue} onUpdate={fetchIssues} />
+                <PostCard
+                    key={issue.id}
+                    issue={issue}
+                    onUpdate={fetchIssues}
+                    onSelect={() => navigate(`/issues/${issue.id}`)}
+                />
             ))}
         </div>
     );

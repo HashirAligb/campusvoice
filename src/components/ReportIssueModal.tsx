@@ -158,7 +158,7 @@ export default function ReportIssueModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
             <div className="bg-gray-800 rounded-lg border border-gray-600 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 <div className="sticky top-0 bg-gray-800 border-b border-gray-600 px-6 py-4 flex items-center justify-between">
                     <h2 className="text-2xl font-semibold text-green-400">Report New Issue</h2>

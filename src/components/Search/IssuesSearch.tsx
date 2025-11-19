@@ -1,4 +1,3 @@
-// IssuesSearch.tsx
 import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import Searchbar from "./Searchbar";
@@ -7,8 +6,6 @@ export default function IssuesSearch() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
   async function handleSearch(query: string) {
-    console.log("User typed:", query); // <- should log on every keypress
-
     if (!query) {
       setSuggestions([]);
       return;
@@ -39,7 +36,7 @@ export default function IssuesSearch() {
   return (
     <Searchbar
       placeholder="Search issues..."
-      onChange={handleSearch}          // 👈 KEY CHANGE
+      onChange={handleSearch}
       suggestions={suggestions}
       onSelectSuggestion={handleSelectSuggestion}
       debounceMs={0}

@@ -27,9 +27,10 @@ interface Issue {
 interface PostCardProps {
     issue: Issue;
     onUpdate: () => void;
+    onSelect?: (issue: Issue) => void;
 }
 
-export default function PostCard({ issue, onUpdate }: PostCardProps) {
+export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
     const { user } = useAuth();
     const [isExpanded, setIsExpanded] = useState(false);
     const [isVoting, setIsVoting] = useState(false);
@@ -117,14 +118,37 @@ export default function PostCard({ issue, onUpdate }: PostCardProps) {
         ? issue.description.substring(0, 200) + "..."
         : issue.description;
 
+    const handleSelect = () => {
+        if (onSelect) {
+            onSelect(issue);
+        }
+    };
+
     return (
         <>
-            <div className="overflow-hidden hover:bg-black rounded-xl transition-colors">
+            <div
+                className={`overflow-hidden hover:bg-black rounded-xl transition-colors ${
+                    onSelect ? "cursor-pointer focus-within:ring-2 focus-within:ring-green-500" : ""
+                }`}
+                role={onSelect ? "button" : undefined}
+                tabIndex={onSelect ? 0 : undefined}
+                onClick={handleSelect}
+                onKeyDown={(event) => {
+                    if (!onSelect) return;
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        handleSelect();
+                    }
+                }}
+            >
                 <div className="flex">
                     {/* Voting Section */}
                     <div className="flex flex-col items-center p-2 w-12">
                         <button
-                            onClick={() => handleVote('upvote')}
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                handleVote('upvote');
+                            }}
                             disabled={!user || isVoting}
                             className={`p-1 rounded transition-colors ${userVote === 'upvote'
                                     ? "text-green-500 hover:text-green-400"
@@ -138,7 +162,10 @@ export default function PostCard({ issue, onUpdate }: PostCardProps) {
                             {localUpvotes - localDownvotes}
                         </span>
                         <button
-                            onClick={() => handleVote('downvote')}
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                handleVote('downvote');
+                            }}
                             disabled={!user || isVoting}
                             className={`p-1 rounded transition-colors ${userVote === 'downvote'
                                     ? "text-red-500 hover:text-red-400"
@@ -186,7 +213,10 @@ export default function PostCard({ issue, onUpdate }: PostCardProps) {
 
                         {issue.description.length > 200 && (
                             <button
-                                onClick={() => setIsExpanded(!isExpanded)}
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    setIsExpanded(!isExpanded);
+                                }}
                                 className="text-sm text-green-400 hover:text-green-300 mb-3"
                             >
                                 {isExpanded ? "Show less" : "Show more"}
