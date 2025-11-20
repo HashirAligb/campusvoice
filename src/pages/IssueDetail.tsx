@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/auth/useAuth";
-
-type IssueStatus = "open" | "in_progress" | "resolved" | "closed";
+import type { Status } from "@/components/ChangeStatus";
+import ChangeStatus from "@/components/ChangeStatus";
 
 type Issue = {
    id: string;
@@ -12,7 +12,7 @@ type Issue = {
    description: string;
    school: string;
    category: string;
-   status: IssueStatus;
+   status: Status;
    image_url: string | null;
    upvotes: number;
    downvotes: number;
@@ -52,6 +52,7 @@ export default function IssueDetail() {
    const [localDownvotes, setLocalDownvotes] = useState(0);
    const [userVote, setUserVote] = useState<"upvote" | "downvote" | null>(null);
    const [isVoting, setIsVoting] = useState(false);
+   const [localStatus, setLocalStatus] = useState<Status>("open");
 
    const [comments, setComments] = useState<Comment[]>([]);
    const [commentsError, setCommentsError] = useState<string | null>(null);
@@ -89,6 +90,7 @@ export default function IssueDetail() {
             setIssue({ ...(data as Issue), author });
             setLocalUpvotes(data.upvotes);
             setLocalDownvotes(data.downvotes);
+            setLocalStatus(data.status);
 
             if (user) {
                const { data: voteData } = await supabase
@@ -207,19 +209,6 @@ export default function IssueDetail() {
       ];
    }, [issue]);
 
-   const getStatusColor = (status: IssueStatus) => {
-      switch (status) {
-         case "open":
-            return "bg-green-600";
-         case "in_progress":
-            return "bg-yellow-600";
-         case "resolved":
-            return "bg-blue-600";
-         default:
-            return "bg-gray-600";
-      }
-   };
-
    const handleVote = async (voteType: "upvote" | "downvote") => {
       if (!user || !issue || isVoting) return;
 
@@ -302,6 +291,10 @@ export default function IssueDetail() {
       }
    };
 
+   const handleStatusChange = (statusChange: Status) => {
+      setLocalStatus(statusChange);
+   };
+
    if (loading) {
       return (
          <div className='min-h-screen bg-[#0d1017] text-white'>
@@ -338,7 +331,7 @@ export default function IssueDetail() {
          <div className='max-w-5xl mx-auto px-4 py-10'>
             <button
                onClick={() => navigate(-1)}
-               className='mb-6 text-sm text-gray-400 hover:text-white transition-colors'
+               className='mb-6 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer'
             >
                ← Back to feed
             </button>
@@ -353,7 +346,7 @@ export default function IssueDetail() {
                            userVote === "upvote"
                               ? "text-green-500"
                               : "text-gray-400"
-                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        } disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
                      >
                         ▲
                      </button>
@@ -367,7 +360,7 @@ export default function IssueDetail() {
                            userVote === "downvote"
                               ? "text-red-500"
                               : "text-gray-400"
-                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        } disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
                      >
                         ▼
                      </button>
@@ -377,13 +370,12 @@ export default function IssueDetail() {
                         <h1 className='text-3xl font-semibold'>
                            {issue.title}
                         </h1>
-                        <span
-                           className={`px-3 py-1 text-xs rounded-full uppercase tracking-wide ${getStatusColor(
-                              issue.status
-                           )}`}
-                        >
-                           {issue.status.replace("_", " ")}
-                        </span>
+                        <ChangeStatus
+                           issue_id={issue.id}
+                           current_status={localStatus}
+                           author_id={issue.author_id}
+                           onStatusChange={handleStatusChange}
+                        />
                      </div>
                      {issueMeta && (
                         <div className='text-sm text-gray-400 mb-4 flex flex-wrap gap-2'>
@@ -471,7 +463,7 @@ export default function IssueDetail() {
                         disabled={
                            !user || isSubmittingComment || !newComment.trim()
                         }
-                        className='px-4 py-2 bg-green-600 rounded-md hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                        className='px-4 py-2 bg-green-600 rounded-md hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer'
                      >
                         {isSubmittingComment ? "Posting..." : "Post Comment"}
                      </button>

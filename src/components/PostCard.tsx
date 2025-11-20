@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/auth/useAuth";
-import ChangeStatus from "./ChangeStatus";
+import ChangeStatus, { type Status } from "./ChangeStatus";
 
 interface Issue {
    id: string;
@@ -9,7 +9,7 @@ interface Issue {
    description: string;
    school: string;
    category: string;
-   status: "open" | "in_progress" | "resolved" | "closed";
+   status: Status;
    image_url: string | null;
    upvotes: number;
    downvotes: number;
@@ -40,6 +40,7 @@ export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
    const [userVote, setUserVote] = useState<"upvote" | "downvote" | null>(
       issue.user_vote || null
    );
+   const [localStatus, setLocalStatus] = useState<Status>(issue.status);
 
    const formatTimeAgo = (dateString: string) => {
       const date = new Date(dateString);
@@ -53,21 +54,6 @@ export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
       if (diffInSeconds < 604800)
          return `${Math.floor(diffInSeconds / 86400)}d ago`;
       return date.toLocaleDateString();
-   };
-
-   const getStatusColor = (status: string) => {
-      switch (status) {
-         case "open":
-            return "bg-green-600";
-         case "in_progress":
-            return "bg-yellow-600";
-         case "resolved":
-            return "bg-blue-600";
-         case "closed":
-            return "bg-gray-600";
-         default:
-            return "bg-gray-600";
-      }
    };
 
    const handleVote = async (voteType: "upvote" | "downvote") => {
@@ -128,6 +114,10 @@ export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
       }
    };
 
+   const handleStatusChange = (statusChange: Status) => {
+      setLocalStatus(statusChange);
+   };
+
    return (
       <>
          <div
@@ -160,7 +150,7 @@ export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
                         userVote === "upvote"
                            ? "text-green-500 hover:text-green-400"
                            : "text-gray-400 hover:text-green-400"
-                     } disabled:opacity-50 disabled:cursor-not-allowed`}
+                     } disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
                   >
                      <svg
                         className='w-5 h-5'
@@ -187,7 +177,7 @@ export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
                         userVote === "downvote"
                            ? "text-red-500 hover:text-red-400"
                            : "text-gray-400 hover:text-red-400"
-                     } disabled:opacity-50 disabled:cursor-not-allowed`}
+                     } disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer`}
                   >
                      <svg
                         className='w-5 h-5'
@@ -213,13 +203,10 @@ export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
                            </h3>
                            <ChangeStatus
                               issue_id={issue.id}
-                              current_status={issue.status}
+                              current_status={localStatus}
                               author_id={issue.author_id}
-                              onStatusChange={onUpdate}
+                              onStatusChange={handleStatusChange}
                            />
-                           {/* <span className={`px-2 py-0.5 text-xs font-medium rounded ${getStatusColor(issue.status)} text-white`}>
-                                        {issue.status.replace('_', ' ').toUpperCase()}
-                                    </span> */}
                         </div>
                         <div className='flex items-center gap-3 text-sm text-gray-400'>
                            <span>{issue.school}</span>

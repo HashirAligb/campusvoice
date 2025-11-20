@@ -6,10 +6,10 @@ interface ChangeStatusProps {
    issue_id: string;
    current_status: Status;
    author_id: string;
-   onStatusChange: () => void;
+   onStatusChange: (newStatus: Status) => void;
 }
 
-type Status = "open" | "in_progress" | "resolved" | "closed";
+export type Status = "open" | "in_progress" | "resolved" | "closed";
 
 function ChangeStatus({
    issue_id,
@@ -46,7 +46,7 @@ function ChangeStatus({
 
          if (fetchError) throw fetchError;
 
-         onStatusChange();
+         onStatusChange(statusChange);
       } catch (error) {
          console.error("Error occurred changing status:", error);
       }
