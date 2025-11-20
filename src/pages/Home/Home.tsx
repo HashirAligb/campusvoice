@@ -59,9 +59,9 @@ export default function Home() {
                         {/* Slide-in/out container */}
                         <div
                             className={`w-90 h-full bg-[#12161f] border-r border-gray-600 transition-transform
-                                        duration-300 ${isDesktopSidebarOpen ? "translate-x-0" : "-translate-x-[90%]"}`}
+                                        duration-300 ${isDesktopSidebarOpen ? "translate-x-0" : "-translate-x-[87%]"}`}
                         >
-                            <div className={`max-h-[calc(100vh-5rem)] p-4 pr-10 ${isDesktopSidebarOpen ? "overflow-y-auto sidebar-scroll" : "overflow-hidden" }`}>
+                            <div className={`max-h-[calc(100vh-4.75rem)] p-4 pr-7 ${isDesktopSidebarOpen ? "overflow-y-auto sidebar-scroll" : "overflow-hidden" }`}>
                                 <Sidebar
                                     selectedSchool={selectedSchool}
                                     selectedCategory={selectedCategory}

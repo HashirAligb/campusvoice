@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/auth/useAuth";
 
@@ -26,11 +26,27 @@ export default function ReportIssueModal({
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [animateIn, setAnimateIn] = useState(false);
 
     const cunySchools = [
-        { name: "Queens College", code: "queens" },
+        { name: "Baruch College", code: "baruch" },
+        { name: "Borough of Manhattan Community College", code: "bmcc" },
+        { name: "Bronx Community College", code: "bronx community" },
+        { name: "Brooklyn College", code: "brooklyn" },
         { name: "City College", code: "city" },
+        { name: "College of Staten Island", code: "staten island" },
+        { name: "Guttman Community College", code: "guttman" },
+        { name: "Hostos Community College", code: "hostos" },
         { name: "Hunter College", code: "hunter" },
+        { name: "John Jay College of Criminal Justice", code: "john jay" },
+        { name: "Kingsborough Community College", code: "kingsborough" },
+        { name: "LaGuardia Community College", code: "laguardia" },
+        { name: "Lehman College", code: "lehman" },
+        { name: "Medgar Evers College", code: "medgar evers" },
+        { name: "New York City College of Technology", code: "city tech" },
+        { name: "Queens College", code: "queens" },
+        { name: "Queens Community College", code: "queens community" },
+        { name: "York College", code: "york" },
     ];
 
     const issueCategories = [
@@ -155,11 +171,27 @@ export default function ReportIssueModal({
         }
     };
 
+    useEffect(() => {
+        if (isOpen) {
+            setSchool(defaultSchool || "");
+            setCategory(defaultCategory || "");
+        }
+    }, [defaultSchool, defaultCategory, isOpen]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        const timeoutId = window.setTimeout(() => setAnimateIn(true), 10);
+        return () => {
+            window.clearTimeout(timeoutId);
+            setAnimateIn(false);
+        };
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4">
-            <div className="bg-gray-800 rounded-lg border border-gray-600 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4 transition-opacity duration-200 ${animateIn ? "opacity-100" : "opacity-0"}`}>
+            <div className={`bg-gray-800 rounded-lg border border-gray-600 w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all duration-200 ease-out ${animateIn ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-3"}`}>
                 <div className="sticky top-0 bg-gray-800 border-b border-gray-600 px-6 py-4 flex items-center justify-between">
                     <h2 className="text-2xl font-semibold text-green-400">Report New Issue</h2>
                     <button
@@ -311,4 +343,3 @@ export default function ReportIssueModal({
         </div>
     );
 }
-

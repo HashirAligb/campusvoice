@@ -5,8 +5,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     username TEXT UNIQUE,
-    first_name TEXT,
-    last_name TEXT,
+    firstname TEXT,
+    lastname TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -157,7 +157,7 @@ CREATE POLICY "Users can update their own votes" ON issue_votes
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.profiles (id, username, first_name, last_name)
+    INSERT INTO public.profiles (id, username, firstname, lastname)
     VALUES (
         NEW.id,
         NEW.raw_user_meta_data->>'userName',

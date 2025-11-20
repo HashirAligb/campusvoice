@@ -16,8 +16,8 @@ export interface Issue {
     author?: {
         id: string;
         username: string | null;
-        first_name: string | null;
-        last_name: string | null;
+        firstname: string | null;
+        lastname: string | null;
     };
     user_vote?: 'upvote' | 'downvote' | null;
 }

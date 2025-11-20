@@ -18,19 +18,18 @@ interface Issue {
     author?: {
         id: string;
         username: string | null;
-        first_name: string | null;
-        last_name: string | null;
+        firstname: string | null;
+        lastname: string | null;
     };
     user_vote?: 'upvote' | 'downvote' | null;
 }
 
 interface PostCardProps {
     issue: Issue;
-    onUpdate: () => void;
     onSelect?: (issue: Issue) => void;
 }
 
-export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
+export default function PostCard({ issue, onSelect }: PostCardProps) {
     const { user } = useAuth();
     const [isExpanded, setIsExpanded] = useState(false);
     const [isVoting, setIsVoting] = useState(false);
@@ -106,7 +105,6 @@ export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
             }
 
             setUserVote(newVote);
-            onUpdate(); // Refresh to get accurate counts
         } catch (error) {
             console.error("Error voting:", error);
         } finally {
@@ -198,7 +196,7 @@ export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
                                             <span>•</span>
                                             <span>
                                                 {issue.author.username ||
-                                                    `${issue.author.first_name || ''} ${issue.author.last_name || ''}`.trim() ||
+                                                    `${issue.author.firstname || ''} ${issue.author.lastname || ''}`.trim() ||
                                                     'Anonymous'}
                                             </span>
                                         </>
