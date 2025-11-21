@@ -29,13 +29,22 @@ interface FeedProps {
     selectedSchool: string | null;
     selectedCategory: string | null;
     refreshTrigger?: number;
+    authorId?: string | null;
+    searchQuery?: string | null;
 }
 
-export default function Feed({ selectedSchool, selectedCategory, refreshTrigger }: FeedProps) {
+export default function Feed({
+    selectedSchool,
+    selectedCategory,
+    refreshTrigger,
+    authorId,
+    searchQuery = null,
+}: FeedProps) {
     const [issues, setIssues] = useState<Issue[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const normalizedSearch = searchQuery ?? null;
 
     const fetchIssues = async () => {
         setLoading(true);
@@ -45,8 +54,12 @@ export default function Feed({ selectedSchool, selectedCategory, refreshTrigger 
             // Try a simpler query first to check if table exists
             let query = supabase
                 .from("issues")
-                .select("*")
-                .order("created_at", { ascending: false });
+                .select("*");
+
+            // Default ordering by time when no search filter
+            if (!normalizedSearch) {
+                query = query.order("created_at", { ascending: false });
+            }
 
             // Apply filters
             if (selectedSchool) {
@@ -54,6 +67,12 @@ export default function Feed({ selectedSchool, selectedCategory, refreshTrigger 
             }
             if (selectedCategory) {
                 query = query.eq("category", selectedCategory);
+            }
+            if (authorId) {
+                query = query.eq("author_id", authorId);
+            }
+            if (normalizedSearch) {
+                query = query.ilike("title", `%${normalizedSearch}%`);
             }
 
             const { data, error: fetchError } = await query;
@@ -114,14 +133,14 @@ export default function Feed({ selectedSchool, selectedCategory, refreshTrigger 
                         user_vote: votesMap.get(issue.id) || null,
                     }));
 
-                    setIssues(issuesWithVotes as Issue[]);
+                    setIssues(applyRelevanceOrdering(issuesWithVotes, normalizedSearch));
                 } catch (voteError) {
                     // If vote fetch fails, just use issues without votes
                     console.warn("Could not fetch votes:", voteError);
-                    setIssues(issuesWithAuthors as Issue[]);
+                    setIssues(applyRelevanceOrdering(issuesWithAuthors, normalizedSearch));
                 }
             } else {
-                setIssues(issuesWithAuthors as Issue[]);
+                setIssues(applyRelevanceOrdering(issuesWithAuthors, normalizedSearch));
             }
         } catch (err: any) {
             setError(err.message || "Failed to load issues");
@@ -133,7 +152,38 @@ export default function Feed({ selectedSchool, selectedCategory, refreshTrigger 
 
     useEffect(() => {
         fetchIssues();
-    }, [selectedSchool, selectedCategory, refreshTrigger]);
+    }, [selectedSchool, selectedCategory, refreshTrigger, authorId, normalizedSearch]);
+
+    const applyRelevanceOrdering = (issuesList: Issue[], query: string | null) => {
+        if (!query) {
+            return issuesList;
+        }
+
+        const q = query.trim().toLowerCase();
+        if (!q) {
+            return issuesList;
+        }
+
+        const scored = issuesList.map((issue) => {
+            const title = (issue.title || "").toLowerCase();
+            const desc = (issue.description || "").toLowerCase();
+
+            const startsWithScore = title.startsWith(q) ? 5 : 0;
+            const exactScore = title === q ? 8 : 0;
+            const titleIncludes = title.includes(q) ? 3 : 0;
+            const descIncludes = desc.includes(q) ? 1 : 0;
+
+            const score = exactScore + startsWithScore + titleIncludes + descIncludes;
+            return { ...issue, _score: score };
+        });
+
+        return scored
+            .sort((a, b) => {
+                if (b._score !== a._score) return b._score - a._score;
+                return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            })
+            .map(({ _score, ...issue }) => issue as Issue);
+    };
 
     if (loading) {
         return (
@@ -158,13 +208,15 @@ export default function Feed({ selectedSchool, selectedCategory, refreshTrigger 
     }
 
     if (issues.length === 0) {
+        const emptyMessage = authorId
+            ? "You haven't posted any issues yet."
+            : selectedSchool || selectedCategory
+                ? "No issues found matching your filters."
+                : "No issues yet. Be the first to report one!";
+
         return (
             <div className="bg-gray-700 p-6 rounded-lg border border-gray-600 text-center">
-                <p className="text-gray-400">
-                    {selectedSchool || selectedCategory
-                        ? "No issues found matching your filters."
-                        : "No issues yet. Be the first to report one!"}
-                </p>
+                <p className="text-gray-400">{emptyMessage}</p>
             </div>
         );
     }
@@ -181,4 +233,3 @@ export default function Feed({ selectedSchool, selectedCategory, refreshTrigger 
         </div>
     );
 }
-

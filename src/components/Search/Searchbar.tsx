@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type FocusEvent } from "react";
 
 type SearchbarProps = {
     value?: string;
@@ -10,6 +10,7 @@ type SearchbarProps = {
     onSelectSuggestion?: (suggestion: string) => void;
     className?: string;
     autoFocus?: boolean;
+    onSubmit?: (value: string) => void;
 };
 
 export default function Searchbar({
@@ -21,6 +22,7 @@ export default function Searchbar({
     onSelectSuggestion,
     className,
     autoFocus = false,
+    onSubmit,
 }: SearchbarProps) {
     const [input, setInput] = useState<string>(value ?? "");
     const [open, setOpen] = useState<boolean>(false);
@@ -74,6 +76,7 @@ export default function Searchbar({
             timerRef.current = null;
         }
         onChange?.(v);
+        onSubmit?.(v);
         setOpen(false);
         inputRef.current?.blur();
     }
@@ -111,6 +114,35 @@ export default function Searchbar({
         setOpen(false);
         setHighlight(-1);
     }
+
+    useEffect(() => {
+        const hasMatches =
+            input.trim().length > 0 &&
+            suggestions.some((s) =>
+                s.toLowerCase().includes(input.trim().toLowerCase())
+            );
+        if (hasMatches) {
+            setOpen(true);
+        }
+    }, [suggestions, input]);
+
+    // Reset highlight when focus leaves input
+    useEffect(() => {
+        const handleBlur = (event: FocusEvent) => {
+            if (inputRef.current && event.target === inputRef.current) {
+                setHighlight(-1);
+            }
+        };
+        const node = inputRef.current;
+        if (node) {
+            node.addEventListener("blur", handleBlur);
+        }
+        return () => {
+            if (node) {
+                node.removeEventListener("blur", handleBlur);
+            }
+        };
+    }, []);
 
     return (
         <div
@@ -157,7 +189,11 @@ export default function Searchbar({
                     type="text"
                     value={input}
                     onChange={(e) => change(e.target.value)}
-                    onFocus={() => setOpen(input.length > 0 && filtered.length > 0)}
+                    onFocus={() => {
+                        setHighlight(-1);
+                        setOpen(input.length > 0 && filtered.length > 0);
+                    }}
+                    onMouseDown={() => setHighlight(-1)}
                     onKeyDown={handleKeyDown}
                     placeholder={placeholder}
                     autoComplete="off"
@@ -215,8 +251,9 @@ export default function Searchbar({
                                     ev.preventDefault();
                                 }}
                                 onClick={() => choose(s)}
-                                onMouseEnter={() => setHighlight(i)}
-                                className={`px-3 py-2 text-gray-300 cursor-pointer  ${isHighlighted ? "bg-gray-800 " : "bg-[#161b27]"}`}
+                                className={`px-3 py-2 text-gray-300 cursor-pointer ${
+                                    isHighlighted ? "bg-gray-800" : "bg-[#161b27] hover:bg-gray-800"
+                                }`}
                             >
                                 {s}
                             </li>

@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Home/Sidebar";
 import Feed from "@/components/Home/Feed";
 import ReportIssueModal from "@/components/ReportIssueModal";
 
 export default function Home() {
+    const navigate = useNavigate();
     const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
@@ -104,7 +106,10 @@ export default function Home() {
                                     >
                                         Report New Issue
                                     </button>
-                                    <button className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition-colors">
+                                    <button
+                                        onClick={() => navigate("/MyIssues")}
+                                        className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-500 transition-colors"
+                                    >
                                         View My Issues
                                     </button>
                                 </div>

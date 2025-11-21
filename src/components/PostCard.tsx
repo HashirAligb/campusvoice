@@ -30,7 +30,7 @@ interface PostCardProps {
    onSelect?: (issue: Issue) => void;
 }
 
-export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
+export default function PostCard({ issue, onSelect }: PostCardProps) {
    const { user } = useAuth();
    const [isExpanded, setIsExpanded] = useState(false);
    const [isVoting, setIsVoting] = useState(false);
@@ -217,8 +217,8 @@ export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
                                  <span>•</span>
                                  <span>
                                     {issue.author.username ||
-                                       `${issue.author.first_name || ""} ${
-                                          issue.author.last_name || ""
+                                       `${issue.author.firstname || ""} ${
+                                          issue.author.lastname || ""
                                        }`.trim() ||
                                        "Anonymous"}
                                  </span>

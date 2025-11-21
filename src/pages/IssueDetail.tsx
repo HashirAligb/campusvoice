@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/auth/useAuth";
 import type { Status } from "@/components/ChangeStatus";
 import ChangeStatus from "@/components/ChangeStatus";
+import BackToFeedButton from "@/components/BackToFeedButton";
 
 type Issue = {
    id: string;
@@ -59,6 +60,8 @@ export default function IssueDetail() {
    const [isCommentsLoading, setIsCommentsLoading] = useState(true);
    const [newComment, setNewComment] = useState("");
    const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+   const [commentHeight, setCommentHeight] = useState<string>("auto");
+   const commentInputRef = useRef<HTMLTextAreaElement | null>(null);
 
    useEffect(() => {
       if (!issueId) return;
@@ -279,6 +282,11 @@ export default function IssueDetail() {
          }
 
          setNewComment("");
+         setCommentHeight("auto");
+         if (commentInputRef.current) {
+            const el = commentInputRef.current;
+            el.style.height = "auto";
+         }
          await loadComments();
       } catch (err: any) {
          console.error("Failed to submit comment:", err);
@@ -290,6 +298,25 @@ export default function IssueDetail() {
          setIsSubmittingComment(false);
       }
    };
+
+   const handleCommentInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setNewComment(event.target.value);
+      const el = event.target;
+      el.style.height = "auto";
+      const nextHeight = `${el.scrollHeight}px`;
+      el.style.height = nextHeight;
+      setCommentHeight(nextHeight);
+   };
+
+   useEffect(() => {
+      if (commentInputRef.current) {
+         const el = commentInputRef.current;
+         el.style.height = "auto";
+         const nextHeight = `${el.scrollHeight}px`;
+         el.style.height = nextHeight;
+         setCommentHeight(nextHeight);
+      }
+   }, [newComment]);
 
    const handleStatusChange = (statusChange: Status) => {
       setLocalStatus(statusChange);
@@ -329,16 +356,11 @@ export default function IssueDetail() {
       <div className='min-h-screen bg-[#0d1017] text-white'>
          <Navbar />
          <div className='max-w-5xl mx-auto px-4 py-10'>
-            <button
-               onClick={() => navigate(-1)}
-               className='mb-6 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer'
-            >
-               ← Back to feed
-            </button>
+            <BackToFeedButton className='mb-6' />
 
-            <div className='bg-[#12161f] border border-gray-700 rounded-xl shadow-xl'>
+            <div className='bg-transparent shadow-xl'>
                <div className='flex'>
-                  <div className='flex flex-col items-center px-4 py-6 border-r border-gray-800'>
+                  <div className='flex flex-col items-center px-4 py-6'>
                      <button
                         onClick={() => handleVote("upvote")}
                         disabled={!user || isVoting}
@@ -365,7 +387,7 @@ export default function IssueDetail() {
                         ▼
                      </button>
                   </div>
-                  <div className='flex-1 p-6'>
+                  <div className='flex-1 p-3'>
                      <div className='flex flex-wrap items-center gap-3 mb-3'>
                         <h1 className='text-3xl font-semibold'>
                            {issue.title}
@@ -392,7 +414,7 @@ export default function IssueDetail() {
                            ))}
                         </div>
                      )}
-                     <p className='text-lg leading-relaxed text-gray-200 mb-6 whitespace-pre-line'>
+                     <p className='text-lg leading-relaxed text-gray-200 mb-3 whitespace-pre-line'>
                         {issue.description}
                      </p>
 
@@ -400,75 +422,92 @@ export default function IssueDetail() {
                         <img
                            src={issue.image_url}
                            alt={issue.title}
-                           className='w-full rounded-lg border border-gray-700 mb-6'
+                           className='w-full rounded-lg border border-gray-700'
                         />
                      )}
                   </div>
                </div>
             </div>
 
-            <section className='mt-10'>
-               <h2 className='text-2xl font-semibold mb-4'>Comments</h2>
-               {isCommentsLoading ? (
-                  <p className='text-gray-400'>Loading comments...</p>
-               ) : commentsError ? (
-                  <p className='text-red-400'>{commentsError}</p>
-               ) : comments.length === 0 ? (
-                  <p className='text-gray-400'>
-                     No comments yet. Be the first to add one!
-                  </p>
-               ) : (
-                  <div className='space-y-4'>
-                     {comments.map((comment) => (
-                        <div
-                           key={comment.id}
-                           className='bg-[#12161f] border border-gray-700 p-4 rounded-lg'
-                        >
-                           <div className='flex items-center gap-2 text-sm text-gray-400 mb-2'>
-                              <span>
-                                 {comment.author
-                                    ? comment.author.username ||
-                                      `${comment.author.firstname || ""} ${
-                                         comment.author.lastname || ""
-                                      }`.trim()
-                                    : "Anonymous"}
-                              </span>
-                              <span>•</span>
-                              <span>{formatTimeAgo(comment.created_at)}</span>
-                           </div>
-                           <p className='text-gray-200 whitespace-pre-line'>
-                              {comment.content}
-                           </p>
-                        </div>
-                     ))}
-                  </div>
-               )}
-
-               <form className='mt-6' onSubmit={handleSubmitComment}>
-                  <textarea
-                     value={newComment}
-                     onChange={(event) => setNewComment(event.target.value)}
-                     placeholder={
-                        user
-                           ? "Share your thoughts..."
-                           : "Log in to join the conversation."
-                     }
-                     className='w-full bg-[#12161f] border border-gray-700 rounded-lg p-3 text-white resize-none focus:outline-none focus:border-green-500'
-                     rows={4}
-                     disabled={!user || isSubmittingComment}
-                  />
-                  <div className='mt-3 flex justify-end'>
-                     <button
-                        type='submit'
-                        disabled={
-                           !user || isSubmittingComment || !newComment.trim()
+            <section className='mt-5 space-y-6'>
+               <div>
+                  <h2 className='text-2xl font-semibold mb-3'>
+                     Share your thoughts
+                  </h2>
+                  <form onSubmit={handleSubmitComment} className='space-y-3'>
+                     <textarea
+                        ref={commentInputRef}
+                        value={newComment}
+                        onChange={handleCommentInput}
+                        placeholder={
+                           user
+                              ? "Share your thoughts..."
+                              : "Log in to join the conversation."
                         }
-                        className='px-4 py-2 bg-green-600 rounded-md hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer'
-                     >
-                        {isSubmittingComment ? "Posting..." : "Post Comment"}
-                     </button>
+                        className='w-full bg-[#12161f] border border-gray-700 rounded-lg p-3 text-white resize-none overflow-hidden focus:outline-none focus:border-green-500'
+                        rows={1}
+                        style={{ height: commentHeight }}
+                        disabled={!user || isSubmittingComment}
+                     />
+                     <div className='flex justify-end'>
+                        <button
+                           type='submit'
+                           disabled={
+                              !user || isSubmittingComment || !newComment.trim()
+                           }
+                           className='px-4 py-2 bg-green-600 rounded-md hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer'
+                        >
+                           {isSubmittingComment ? "Posting..." : "Post Comment"}
+                        </button>
+                     </div>
+                  </form>
+               </div>
+
+               <div>
+                  <div className='flex items-center gap-2 mb-4'>
+                     <h3 className='text-xl font-semibold'>Comments</h3>
+                     {!isCommentsLoading && (
+                        <span className='text-sm text-gray-400'>
+                           {comments.length}{" "}
+                           {comments.length === 1 ? "comment" : "comments"}
+                        </span>
+                     )}
                   </div>
-               </form>
+                  {isCommentsLoading ? (
+                     <p className='text-gray-400'>Loading comments...</p>
+                  ) : commentsError ? (
+                     <p className='text-red-400'>{commentsError}</p>
+                  ) : comments.length === 0 ? (
+                     <p className='text-gray-400'>
+                        No comments yet. Be the first to add one!
+                     </p>
+                  ) : (
+                     <div className='space-y-4'>
+                        {comments.map((comment) => (
+                           <div
+                              key={comment.id}
+                              className='bg-[#12161f] border border-gray-700 p-4 rounded-lg'
+                           >
+                              <div className='flex items-center gap-2 text-sm text-gray-400 mb-2'>
+                                 <span>
+                                    {comment.author
+                                       ? comment.author.username ||
+                                         `${comment.author.firstname || ""} ${
+                                            comment.author.lastname || ""
+                                         }`.trim()
+                                       : "Anonymous"}
+                                 </span>
+                                 <span>•</span>
+                                 <span>{formatTimeAgo(comment.created_at)}</span>
+                              </div>
+                              <p className='text-gray-200 whitespace-pre-line'>
+                                 {comment.content}
+                              </p>
+                           </div>
+                        ))}
+                     </div>
+                  )}
+               </div>
             </section>
          </div>
       </div>

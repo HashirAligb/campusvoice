@@ -4,6 +4,8 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/AuthPage/Login";
 import Signup from "./pages/AuthPage/Signup";
 import IssueDetail from "./pages/IssueDetail";
+import MyIssues from "./pages/MyIssues";
+import SearchResults from "./pages/SearchResults";
 
 function App() {
     return (
@@ -14,6 +16,8 @@ function App() {
                 <Route path="/Login" element={<Login />} />
                 <Route path="/Signup" element={<Signup />} />
                 <Route path="/issues/:issueId" element={<IssueDetail />} />
+                <Route path="/MyIssues" element={<MyIssues />} />
+                <Route path="/search" element={<SearchResults />} />
             </Routes>
         </BrowserRouter>
     );
