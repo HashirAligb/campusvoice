@@ -12,7 +12,7 @@ type Issue = {
    description: string;
    school: string;
    category: string;
-   status: IssueStatus;
+   status: Status;
    image_url: string | null;
    upvotes: number;
    downvotes: number;
@@ -208,19 +208,6 @@ export default function IssueDetail() {
             : "Anonymous",
       ];
    }, [issue]);
-
-   const getStatusColor = (status: IssueStatus) => {
-      switch (status) {
-         case "open":
-            return "bg-green-600";
-         case "in_progress":
-            return "bg-yellow-600";
-         case "resolved":
-            return "bg-blue-600";
-         default:
-            return "bg-gray-600";
-      }
-   };
 
    const handleVote = async (voteType: "upvote" | "downvote") => {
       if (!user || !issue || isVoting) return;
