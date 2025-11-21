@@ -12,7 +12,7 @@ type Issue = {
    description: string;
    school: string;
    category: string;
-   status: Status;
+   status: IssueStatus;
    image_url: string | null;
    upvotes: number;
    downvotes: number;
@@ -22,8 +22,8 @@ type Issue = {
    author?: {
       id: string;
       username: string | null;
-      first_name: string | null;
-      last_name: string | null;
+      firstname: string | null;
+      lastname: string | null;
    } | null;
 };
 
@@ -35,8 +35,8 @@ type Comment = {
    author?: {
       id: string;
       username: string | null;
-      first_name: string | null;
-      last_name: string | null;
+      firstname: string | null;
+      lastname: string | null;
    } | null;
 };
 
@@ -81,7 +81,7 @@ export default function IssueDetail() {
             if (data?.author_id) {
                const { data: profiles } = await supabase
                   .from("profiles")
-                  .select("id, username, first_name, last_name")
+                  .select("id, username, firstname, lastname")
                   .eq("id", data.author_id)
                   .limit(1);
                author = profiles && profiles.length > 0 ? profiles[0] : null;
@@ -155,7 +155,7 @@ export default function IssueDetail() {
          if (authorIds.length > 0) {
             const { data: profiles } = await supabase
                .from("profiles")
-               .select("id, username, first_name, last_name")
+               .select("id, username, firstname, lastname")
                .in("id", authorIds);
             authorsMap = new Map(
                (profiles || []).map((profile) => [profile.id, profile])
@@ -202,12 +202,25 @@ export default function IssueDetail() {
          formatTimeAgo(issue.created_at),
          issue.author
             ? issue.author.username ||
-              `${issue.author.first_name || ""} ${
-                 issue.author.last_name || ""
+              `${issue.author.firstname || ""} ${
+                 issue.author.lastname || ""
               }`.trim()
             : "Anonymous",
       ];
    }, [issue]);
+
+   const getStatusColor = (status: IssueStatus) => {
+      switch (status) {
+         case "open":
+            return "bg-green-600";
+         case "in_progress":
+            return "bg-yellow-600";
+         case "resolved":
+            return "bg-blue-600";
+         default:
+            return "bg-gray-600";
+      }
+   };
 
    const handleVote = async (voteType: "upvote" | "downvote") => {
       if (!user || !issue || isVoting) return;
@@ -428,8 +441,8 @@ export default function IssueDetail() {
                               <span>
                                  {comment.author
                                     ? comment.author.username ||
-                                      `${comment.author.first_name || ""} ${
-                                         comment.author.last_name || ""
+                                      `${comment.author.firstname || ""} ${
+                                         comment.author.lastname || ""
                                       }`.trim()
                                     : "Anonymous"}
                               </span>

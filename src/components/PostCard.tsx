@@ -27,7 +27,6 @@ interface Issue {
 
 interface PostCardProps {
    issue: Issue;
-   onUpdate: () => void;
    onSelect?: (issue: Issue) => void;
 }
 
@@ -95,7 +94,6 @@ export default function PostCard({ issue, onUpdate, onSelect }: PostCardProps) {
          }
 
          setUserVote(newVote);
-         onUpdate(); // Refresh to get accurate counts
       } catch (error) {
          console.error("Error voting:", error);
       } finally {

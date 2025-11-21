@@ -19,8 +19,8 @@ interface Issue {
     author?: {
         id: string;
         username: string | null;
-        first_name: string | null;
-        last_name: string | null;
+        firstname: string | null;
+        lastname: string | null;
     };
     user_vote?: 'upvote' | 'downvote' | null;
 }
@@ -76,7 +76,7 @@ export default function Feed({ selectedSchool, selectedCategory, refreshTrigger 
                     const authorIds = [...new Set(data.map((issue: any) => issue.author_id))];
                     const { data: profiles } = await supabase
                         .from("profiles")
-                        .select("id, username, first_name, last_name")
+                        .select("id, username, firstname, lastname")
                         .in("id", authorIds);
 
                     if (profiles) {
@@ -175,7 +175,6 @@ export default function Feed({ selectedSchool, selectedCategory, refreshTrigger 
                 <PostCard
                     key={issue.id}
                     issue={issue}
-                    onUpdate={fetchIssues}
                     onSelect={() => navigate(`/issues/${issue.id}`)}
                 />
             ))}

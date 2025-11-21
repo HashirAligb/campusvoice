@@ -23,6 +23,7 @@ export default function Sidebar({
     const [selectedCategory, setSelectedCategory] = useState<string | null>(
         externalSelectedCategory || null
     );
+    const [isSchoolListOpen, setIsSchoolListOpen] = useState(false);
 
     // Sync with external state
     useEffect(() => {
@@ -77,14 +78,18 @@ export default function Sidebar({
     ];
 
     return (
-        <div className="w-full pl-2">
+        <div className="w-full pl-3 min-h-[calc(100vh-6.75rem)]">
             <div className="space-y-6">
                 {/* Header with close button */}
-                <div className="flex items-center justify-between border-b border-gray-600 pb-4 w-[92%]">
+                <div
+                    className={`flex items-center justify-between border-b pb-4 ${
+                        isOpen ? "border-gray-600" : "border-transparent"
+                    }`}
+                >
                     <h2 className="text-lg font-semibold text-green-400">Browse Issues</h2>
                     <button
                         onClick={onToggleSidebar}
-                        className="p-1 -mr-14.5 hover:bg-gray-700 rounded-md transition-colors"
+                        className="-mr-4 p-1 hover:bg-gray-700 rounded-md transition-colors"
                         title={isOpen ? "Collapse sidebar" : "Expand sidebar"}
                     >
                         <svg
@@ -103,66 +108,94 @@ export default function Sidebar({
                     </button>
                 </div>
 
-                {/* CUNY Schools Section */}
-                <div>
-                    <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3">
-                        Schools
-                    </h3>
-                    <div className="space-y-1">
-                        {cunySchools.map((school) => (
+                <div
+                    className={`space-y-6 transition-opacity duration-200 ${
+                        isOpen ? "opacity-100" : "opacity-0 pointer-events-none select-none"
+                    }`}
+                    aria-hidden={!isOpen}
+                >
+                    {/* CUNY Schools Section */}
+                    <div>
                         <button
-                            key={school.code}
-                            onClick={() => handleSchoolChange(
-                                selectedSchool === school.code ? null : school.code
-                            )}
-                            className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
-                            selectedSchool === school.code
-                                ? "bg-green-600 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                            }`}
+                            type="button"
+                            onClick={() => setIsSchoolListOpen(prev => !prev)}
+                            className="w-full flex items-center justify-between text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3"
                         >
-                            {school.name}
+                            <span>Schools</span>
+                            <svg
+                                className="w-4 h-4 text-gray-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d={isSchoolListOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+                                />
+                            </svg>
                         </button>
-                        ))}
+                        {isSchoolListOpen && (
+                            <div className="space-y-1">
+                                {cunySchools.map((school) => (
+                                    <button
+                                        key={school.code}
+                                        onClick={() =>
+                                            handleSchoolChange(
+                                                selectedSchool === school.code ? null : school.code
+                                            )
+                                        }
+                                        className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                                            selectedSchool === school.code
+                                                ? "bg-green-600 text-white"
+                                                : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                                        }`}
+                                    >
+                                        {school.name}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                </div>
 
-                {/* Issue Categories Section */}
-                <div>
-                    <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3">
-                        Categories
-                    </h3>
-                    <div className="space-y-1">
-                        {issueCategories.map((category) => (
-                        <button
-                            key={category.name}
-                            onClick={() => handleCategoryChange(
-                                selectedCategory === category.name ? null : category.name
-                            )}
-                            className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center space-x-2 ${
-                            selectedCategory === category.name
-                                ? "bg-green-600 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                            }`}
-                        >
-                            <span>{category.icon}</span>
-                            <span>{category.name}</span>
-                        </button>
-                        ))}
+                    {/* Issue Categories Section */}
+                    <div>
+                        <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3">
+                            Categories
+                        </h3>
+                        <div className="space-y-1">
+                            {issueCategories.map((category) => (
+                            <button
+                                key={category.name}
+                                onClick={() => handleCategoryChange(
+                                    selectedCategory === category.name ? null : category.name
+                                )}
+                                className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center space-x-2 ${
+                                selectedCategory === category.name
+                                    ? "bg-green-600 text-white"
+                                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                                }`}
+                            >
+                                <span>{category.icon}</span>
+                                <span>{category.name}</span>
+                            </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
 
-                {/* Clear Filters */}
-                {(selectedSchool || selectedCategory) && (
-                    <div className="border-t border-gray-600 pt-4">
-                        <button onClick={() => {
-                            handleSchoolChange(null);
-                            handleCategoryChange(null);
-                        }} className="w-full px-3 py-2 bg-gray-700 text-gray-300 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors">
-                            Clear Filters
-                        </button>
-                    </div>
-                )}
+                    {/* Clear Filters */}
+                    {(selectedSchool || selectedCategory) && (
+                        <div className="border-t border-gray-600 pt-4">
+                            <button onClick={() => {
+                                handleSchoolChange(null);
+                                handleCategoryChange(null);
+                            }} className="w-full px-3 py-2 bg-gray-700 text-gray-300 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors">
+                                Clear Filters
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
