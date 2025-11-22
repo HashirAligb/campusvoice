@@ -1,51 +1,64 @@
 import { useState, useEffect } from "react";
 
 interface SidebarProps {
-    selectedSchool?: string | null;
-    selectedCategory?: string | null;
-    onSchoolChange?: (school: string | null) => void;
-    onCategoryChange?: (category: string | null) => void;
+    selectedSchools?: string[];
+    selectedCategories?: string[];
+    onSchoolsChange?: (schools: string[]) => void;
+    onCategoriesChange?: (categories: string[]) => void;
     isOpen?: boolean
     onToggleSidebar?: () => void
 }
 
 export default function Sidebar({
-    selectedSchool: externalSelectedSchool,
-    selectedCategory: externalSelectedCategory,
-    onSchoolChange,
-    onCategoryChange,
+    selectedSchools: externalSelectedSchools,
+    selectedCategories: externalSelectedCategories,
+    onSchoolsChange,
+    onCategoriesChange,
     isOpen = true,
     onToggleSidebar,
 }: SidebarProps) {
-    const [selectedSchool, setSelectedSchool] = useState<string | null>(
-        externalSelectedSchool || null
-    );
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(
-        externalSelectedCategory || null
-    );
+    const [selectedSchools, setSelectedSchools] = useState<string[]>(externalSelectedSchools || []);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(externalSelectedCategories || []);
     const [isSchoolListOpen, setIsSchoolListOpen] = useState(false);
 
     // Sync with external state
     useEffect(() => {
-        if (externalSelectedSchool !== undefined) {
-            setSelectedSchool(externalSelectedSchool);
+        if (externalSelectedSchools !== undefined) {
+            setSelectedSchools(externalSelectedSchools);
         }
-    }, [externalSelectedSchool]);
+    }, [externalSelectedSchools]);
 
     useEffect(() => {
-        if (externalSelectedCategory !== undefined) {
-            setSelectedCategory(externalSelectedCategory);
+        if (externalSelectedCategories !== undefined) {
+            setSelectedCategories(externalSelectedCategories);
         }
-    }, [externalSelectedCategory]);
+    }, [externalSelectedCategories]);
 
-    const handleSchoolChange = (school: string | null) => {
-        setSelectedSchool(school);
-        onSchoolChange?.(school);
+    const toggleSchool = (school: string) => {
+        setSelectedSchools((prev) => {
+            const next = prev.includes(school)
+                ? prev.filter((item) => item !== school)
+                : [...prev, school];
+            onSchoolsChange?.(next);
+            return next;
+        });
     };
 
-    const handleCategoryChange = (category: string | null) => {
-        setSelectedCategory(category);
-        onCategoryChange?.(category);
+    const toggleCategory = (category: string) => {
+        setSelectedCategories((prev) => {
+            const next = prev.includes(category)
+                ? prev.filter((item) => item !== category)
+                : [...prev, category];
+            onCategoriesChange?.(next);
+            return next;
+        });
+    };
+
+    const clearFilters = () => {
+        setSelectedSchools([]);
+        setSelectedCategories([]);
+        onSchoolsChange?.([]);
+        onCategoriesChange?.([]);
     };
 
     const cunySchools = [
@@ -141,13 +154,9 @@ export default function Sidebar({
                                 {cunySchools.map((school) => (
                                     <button
                                         key={school.code}
-                                        onClick={() =>
-                                            handleSchoolChange(
-                                                selectedSchool === school.code ? null : school.code
-                                            )
-                                        }
+                                        onClick={() => toggleSchool(school.code)}
                                         className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
-                                            selectedSchool === school.code
+                                            selectedSchools.includes(school.code)
                                                 ? "bg-green-600 text-white"
                                                 : "text-gray-300 hover:bg-gray-700 hover:text-white"
                                         }`}
@@ -168,11 +177,9 @@ export default function Sidebar({
                             {issueCategories.map((category) => (
                             <button
                                 key={category.name}
-                                onClick={() => handleCategoryChange(
-                                    selectedCategory === category.name ? null : category.name
-                                )}
+                                onClick={() => toggleCategory(category.name)}
                                 className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center space-x-2 ${
-                                selectedCategory === category.name
+                                selectedCategories.includes(category.name)
                                     ? "bg-green-600 text-white"
                                     : "text-gray-300 hover:bg-gray-700 hover:text-white"
                                 }`}
@@ -185,12 +192,9 @@ export default function Sidebar({
                     </div>
 
                     {/* Clear Filters */}
-                    {(selectedSchool || selectedCategory) && (
+                    {(selectedSchools.length > 0 || selectedCategories.length > 0) && (
                         <div className="border-t border-gray-600 pt-4">
-                            <button onClick={() => {
-                                handleSchoolChange(null);
-                                handleCategoryChange(null);
-                            }} className="w-full px-3 py-2 bg-gray-700 text-gray-300 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors">
+                            <button onClick={clearFilters} className="w-full px-3 py-2 bg-gray-700 text-gray-300 rounded-md text-sm hover:bg-gray-600 hover:text-white transition-colors">
                                 Clear Filters
                             </button>
                         </div>

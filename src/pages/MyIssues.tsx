@@ -47,7 +47,7 @@ export default function MyIssues() {
 
     return (
         <div className="relative min-h-screen text-white">
-            <div className="fixed inset-0 -z-10 w-full [background:radial-gradient(125%_125%_at_50%_10%,#0d1017_60%,#4b5563_100%)]" />
+            <div className="fixed inset-0 -z-10 w-full silver-gradient" />
             <Navbar />
             <div className="max-w-5xl mx-auto px-4 py-10 space-y-6">
                 <BackToFeedButton />
@@ -72,8 +72,8 @@ export default function MyIssues() {
                 </div>
 
                 <Feed
-                    selectedSchool={null}
-                    selectedCategory={null}
+                    selectedSchools={[]}
+                    selectedCategories={[]}
                     refreshTrigger={refreshTrigger}
                     authorId={user.id}
                 />

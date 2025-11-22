@@ -26,16 +26,16 @@ interface Issue {
 }
 
 interface FeedProps {
-    selectedSchool: string | null;
-    selectedCategory: string | null;
+    selectedSchools: string[];
+    selectedCategories: string[];
     refreshTrigger?: number;
     authorId?: string | null;
     searchQuery?: string | null;
 }
 
 export default function Feed({
-    selectedSchool,
-    selectedCategory,
+    selectedSchools,
+    selectedCategories,
     refreshTrigger,
     authorId,
     searchQuery = null,
@@ -62,11 +62,11 @@ export default function Feed({
             }
 
             // Apply filters
-            if (selectedSchool) {
-                query = query.eq("school", selectedSchool);
+            if (selectedSchools.length > 0) {
+                query = query.in("school", selectedSchools);
             }
-            if (selectedCategory) {
-                query = query.eq("category", selectedCategory);
+            if (selectedCategories.length > 0) {
+                query = query.in("category", selectedCategories);
             }
             if (authorId) {
                 query = query.eq("author_id", authorId);
@@ -152,7 +152,7 @@ export default function Feed({
 
     useEffect(() => {
         fetchIssues();
-    }, [selectedSchool, selectedCategory, refreshTrigger, authorId, normalizedSearch]);
+    }, [selectedSchools, selectedCategories, refreshTrigger, authorId, normalizedSearch]);
 
     const applyRelevanceOrdering = (issuesList: Issue[], query: string | null) => {
         if (!query) {
@@ -210,7 +210,7 @@ export default function Feed({
     if (issues.length === 0) {
         const emptyMessage = authorId
             ? "You haven't posted any issues yet."
-            : selectedSchool || selectedCategory
+            : selectedSchools.length > 0 || selectedCategories.length > 0
                 ? "No issues found matching your filters."
                 : "No issues yet. Be the first to report one!";
 

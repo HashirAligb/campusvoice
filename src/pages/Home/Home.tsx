@@ -9,8 +9,8 @@ export default function Home() {
     const navigate = useNavigate();
     const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-    const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedSchools, setSelectedSchools] = useState<string[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -20,7 +20,7 @@ export default function Home() {
     
     return (
         <div className="relative min-h-screen">
-            <div className="fixed inset-0 -z-10 w-full [background:radial-gradient(125%_125%_at_50%_10%,#0d1017_60%,#4b5563_100%)]" />
+            <div className="fixed inset-0 -z-10 w-full silver-gradient" />
             {/* Navbar: hamburger on mobile triggers mobile sidebar */}
             <Navbar
                 onOpenSidebar={() => {
@@ -35,11 +35,11 @@ export default function Home() {
                             ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
             >
                 <div className="h-full overflow-y-auto p-4 sidebar-scroll">
-                    <Sidebar
-                        selectedSchool={selectedSchool}
-                        selectedCategory={selectedCategory}
-                        onSchoolChange={setSelectedSchool}
-                        onCategoryChange={setSelectedCategory}
+                        <Sidebar
+                        selectedSchools={selectedSchools}
+                        selectedCategories={selectedCategories}
+                        onSchoolsChange={setSelectedSchools}
+                        onCategoriesChange={setSelectedCategories}
                         isOpen={isMobileSidebarOpen}
                         onToggleSidebar={() => setIsMobileSidebarOpen((prev) => !prev)}
                     />
@@ -60,15 +60,15 @@ export default function Home() {
                     <div className="sticky top-19">
                         {/* Slide-in/out container */}
                         <div
-                            className={`w-90 h-full bg-[#12161f] border-r border-gray-600 transition-transform
+                            className={`w-90 h-full -bg-transparent border-r border-gray-600 transition-transform
                                         duration-300 ${isDesktopSidebarOpen ? "translate-x-0" : "-translate-x-[87%]"}`}
                         >
                             <div className={`max-h-[calc(100vh-4.75rem)] p-4 pr-7 ${isDesktopSidebarOpen ? "overflow-y-auto sidebar-scroll" : "overflow-hidden" }`}>
                                 <Sidebar
-                                    selectedSchool={selectedSchool}
-                                    selectedCategory={selectedCategory}
-                                    onSchoolChange={setSelectedSchool}
-                                    onCategoryChange={setSelectedCategory}
+                                    selectedSchools={selectedSchools}
+                                    selectedCategories={selectedCategories}
+                                    onSchoolsChange={setSelectedSchools}
+                                    onCategoriesChange={setSelectedCategories}
                                     isOpen={isDesktopSidebarOpen}
                                     onToggleSidebar={() => setIsDesktopSidebarOpen((prev) => !prev)}
                                 />
@@ -86,8 +86,8 @@ export default function Home() {
                                     Recent Issues
                                 </h2>
                                 <Feed
-                                    selectedSchool={selectedSchool}
-                                    selectedCategory={selectedCategory}
+                                    selectedSchools={selectedSchools}
+                                    selectedCategories={selectedCategories}
                                     refreshTrigger={refreshTrigger}
                                 />
                             </div>
@@ -123,8 +123,8 @@ export default function Home() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSuccess={handleModalSuccess}
-                defaultSchool={selectedSchool}
-                defaultCategory={selectedCategory}
+                defaultSchool={selectedSchools[0] ?? null}
+                defaultCategory={selectedCategories[0] ?? null}
             />
         </div>
     );

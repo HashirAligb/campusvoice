@@ -353,7 +353,7 @@ export default function IssueDetail() {
    }
 
    return (
-      <div className='min-h-screen bg-[#0d1017] text-white'>
+      <div className='min-h-screen silver-gradient text-white'>
          <Navbar />
          <div className='max-w-5xl mx-auto px-4 py-10'>
             <BackToFeedButton className='mb-6' />

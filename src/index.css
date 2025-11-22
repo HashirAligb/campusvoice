@@ -4,6 +4,13 @@
     .sig-gradient {
         @apply bg-linear-to-r from-green-500 via-green-400 to-green-200 bg-clip-text text-transparent;
     }
+    .silver-gradient {
+        background: radial-gradient(
+            125% 125% at 50% 10%,
+            #0d1017 60%,
+            #757e8a 100%
+        );
+    }
 }
 
 body {

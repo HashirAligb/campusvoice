@@ -34,8 +34,8 @@
 
 ### 5. Sidebar Updates (`src/components/Sidebar.tsx`)
 - Lifted filter state to parent (Home)
-- Accepts props for selectedSchool and selectedCategory
-- Callsbacks for filter changes
+- Accepts props for selectedSchools and selectedCategories (arrays)
+- Callbacks for filter changes
 - Maintains backward compatibility
 
 ### 6. Home Page Integration (`src/pages/Home/Home.tsx`)

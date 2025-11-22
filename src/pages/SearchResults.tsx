@@ -35,8 +35,8 @@ export default function SearchResults() {
                 </div>
 
                 <Feed
-                    selectedSchool={null}
-                    selectedCategory={null}
+                    selectedSchools={[]}
+                    selectedCategories={[]}
                     searchQuery={query || null}
                 />
             </div>
