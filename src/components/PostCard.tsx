@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/auth/useAuth";
 import ChangeStatus, { type Status } from "./ChangeStatus";
+import DeleteButton from "./DeleteButton";
 
 interface Issue {
    id: string;
@@ -28,9 +29,10 @@ interface Issue {
 interface PostCardProps {
    issue: Issue;
    onSelect?: (issue: Issue) => void;
+   onDelete?: (issue_id: string) => void;
 }
 
-export default function PostCard({ issue, onSelect }: PostCardProps) {
+export default function PostCard({ issue, onSelect, onDelete }: PostCardProps) {
    const { user } = useAuth();
    const [isExpanded, setIsExpanded] = useState(false);
    const [isVoting, setIsVoting] = useState(false);
@@ -195,7 +197,7 @@ export default function PostCard({ issue, onSelect }: PostCardProps) {
                <div className='flex-1 p-4'>
                   <div className='flex items-start justify-between mb-2'>
                      <div className='flex-1'>
-                        <div className='flex items-center gap-2 mb-1'>
+                        <div className='relative flex items-center gap-2 mb-1'>
                            <h3 className='text-lg font-semibold text-white'>
                               {issue.title}
                            </h3>
@@ -205,6 +207,13 @@ export default function PostCard({ issue, onSelect }: PostCardProps) {
                               author_id={issue.author_id}
                               onStatusChange={handleStatusChange}
                            />
+                           {user?.id == issue.author_id ? (
+                              <DeleteButton
+                                 issue_id={issue.id}
+                                 author_id={issue.author_id}
+                                 onDelete={onDelete}
+                              />
+                           ) : null}
                         </div>
                         <div className='flex items-center gap-3 text-sm text-gray-400'>
                            <span>{issue.school}</span>

@@ -6,6 +6,7 @@ import { useAuth } from "@/auth/useAuth";
 import type { Status } from "@/components/ChangeStatus";
 import ChangeStatus from "@/components/ChangeStatus";
 import BackToFeedButton from "@/components/BackToFeedButton";
+import DeleteButton from "@/components/DeleteButton";
 
 type Issue = {
    id: string;
@@ -299,7 +300,9 @@ export default function IssueDetail() {
       }
    };
 
-   const handleCommentInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+   const handleCommentInput = (
+      event: React.ChangeEvent<HTMLTextAreaElement>
+   ) => {
       setNewComment(event.target.value);
       const el = event.target;
       el.style.height = "auto";
@@ -320,6 +323,28 @@ export default function IssueDetail() {
 
    const handleStatusChange = (statusChange: Status) => {
       setLocalStatus(statusChange);
+   };
+
+   const handleDelete = async (issue_id: string) => {
+      try {
+         // deletes issue
+         const { error: fetchError } = await supabase
+            .from("issues")
+            .delete()
+            .eq("id", issue_id);
+
+         if (fetchError) throw fetchError;
+
+         // redirect back to the homepage to indicate deletion
+         setTimeout(() => {
+            navigate("/Home");
+         }, 1500);
+      } catch (error) {
+         console.log("error deleting post", error);
+
+         // simple alert (could change to custom)
+         alert("Failed to delete Issue");
+      }
    };
 
    if (loading) {
@@ -388,7 +413,7 @@ export default function IssueDetail() {
                      </button>
                   </div>
                   <div className='flex-1 p-3'>
-                     <div className='flex flex-wrap items-center gap-3 mb-3'>
+                     <div className='relative flex flex-wrap items-center gap-3 mb-3'>
                         <h1 className='text-3xl font-semibold'>
                            {issue.title}
                         </h1>
@@ -398,6 +423,13 @@ export default function IssueDetail() {
                            author_id={issue.author_id}
                            onStatusChange={handleStatusChange}
                         />
+                        {user?.id == issue.author_id ? (
+                           <DeleteButton
+                              issue_id={issue.id}
+                              author_id={issue.author_id}
+                              onDelete={handleDelete}
+                           />
+                        ) : null}
                      </div>
                      {issueMeta && (
                         <div className='text-sm text-gray-400 mb-4 flex flex-wrap gap-2'>
@@ -498,7 +530,9 @@ export default function IssueDetail() {
                                        : "Anonymous"}
                                  </span>
                                  <span>•</span>
-                                 <span>{formatTimeAgo(comment.created_at)}</span>
+                                 <span>
+                                    {formatTimeAgo(comment.created_at)}
+                                 </span>
                               </div>
                               <p className='text-gray-200 whitespace-pre-line'>
                                  {comment.content}
