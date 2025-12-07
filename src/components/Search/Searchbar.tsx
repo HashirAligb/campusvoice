@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type FocusEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 
 type SearchbarProps = {
     value?: string;
@@ -128,7 +128,7 @@ export default function Searchbar({
 
     // Reset highlight when focus leaves input
     useEffect(() => {
-        const handleBlur = (event: FocusEvent) => {
+        const handleBlur = (event: Event) => {
             if (inputRef.current && event.target === inputRef.current) {
                 setHighlight(-1);
             }
